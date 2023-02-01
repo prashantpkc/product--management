@@ -39,7 +39,7 @@ User Model
   updatedAt: {timestamp}
 }
 User APIs
-POST /register
+ ## POST /register
 Create a user document from request body. Request body must contain image.
 Upload image to S3 bucket and save it's public url in user document.
 Save password in encrypted format. (use bcrypt)
@@ -181,13 +181,13 @@ Product Model
   updatedAt: {timestamp},
 }
 Products API (No authentication required)
-POST /products
+## POST /products
 Create a product document from request body.
 Upload product image to S3 bucket and save image public url in document.
 Response format
 On success - Return HTTP status 201. Also return the product document. The response should be a JSON object like this
 On error - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like this
-GET /products
+## GET /products
 Returns all products in the collection that aren't deleted.
 Filters
 Size (The key for this filter will be 'size')
@@ -200,18 +200,18 @@ Sorted by product price in ascending or descending. The key value pair will look
 Response format
 On success - Return HTTP status 200. Also return the product documents. The response should be a JSON object like this
 On error - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like this
-GET /products/:productId
+## GET /products/:productId
 Returns product details by product id
 Response format
 On success - Return HTTP status 200. Also return the product documents. The response should be a JSON object like this
 On error - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like this
-PUT /products/:productId
+## PUT /products/:productId
 Updates a product by changing at least one or all fields
 Check if the productId exists (must have isDeleted false and is present in collection). If it doesn't, return an HTTP status 404 with a response body like this
 Response format
 On success - Return HTTP status 200. Also return the updated product document. The response should be a JSON object like this
 On error - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like this
-DELETE /products/:productId
+## DELETE /products/:productId
 Deletes a product by product id if it's not already deleted
 Response format
 On success - Return HTTP status 200. The response should be a JSON object like this
@@ -231,7 +231,9 @@ Cart Model
   updatedAt: {timestamp},
 }
 Cart APIs (authentication required as authorization header - bearer token)
-POST /users/:userId/cart (Add to cart)
+
+## POST /users/:userId/cart (Add to cart)
+
 Create a cart for the user if it does not exist. Else add product(s) in cart.
 Get cart id in request body.
 Get productId in request body.
@@ -240,11 +242,11 @@ Add a product(s) for a user in the cart.
 Make sure the userId in params and in JWT token match.
 Make sure the user exist
 Make sure the product(s) are valid and not deleted.
-Get product(s) details in response body.
+## Get product(s) details in response body.
 Response format
 On success - Return HTTP status 201. Also return the cart document. The response should be a JSON object like this
 On error - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like this
-PUT /users/:userId/cart (Remove product / Reduce a product's quantity from the cart)
+## PUT /users/:userId/cart (Remove product / Reduce a product's quantity from the cart)
 Updates a cart by either decrementing the quantity of a product by 1 or deleting a product from the cart.
 Get cart id in request body.
 Get productId in request body.
