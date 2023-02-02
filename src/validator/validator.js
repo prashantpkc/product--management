@@ -5,12 +5,18 @@ function isValidEmail(email) {
 
 function isValidphone(phone) {
     const re = /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/;
+    // let phoneRegex = /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/
+    
     return re.test(String(phone));
 }
 
 
 const isValidName = (value) => { return (/^[a-z/\s/A-Z|.|,]+$/).test(value)}
-const isValidpassword = (value) => { return (/^(?=.[0-9])(?=.[!@#$%^&])[a-zA-Z0-9!@#$%^&]{8,15}$/.test(value)); }
+// const isValidpassword = (value) => { return (/^(?=.[0-9])(?=.[!@#$%^&])[a-zA-Z0-9!@#$%^&]{8,15}$/.test(value)); }
+const isValidpassword = (value) => { return (/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,15}$/.test(value)); }
+
+
+
 const isValidCity = (value) => { return (/^[A-za-z]+$/).test(value) }
 const isValidPinCode = (value) => { return (/^[1-9][0-9]{5}$/).test(value) }
 //const isValidProductName = (value) => { return (/^[A-Za-z]+|[A-Za-z]+\[0-9]+$/).test(value) }
@@ -19,4 +25,4 @@ const isValidPinCode = (value) => { return (/^[1-9][0-9]{5}$/).test(value) }
 //const isValidNo = (value) => { return (/^[0-9]+$/).test(value) }
 const isValidImage = (value) => { return (/\.(gif|jpe?g|tiff?|png|webp|bmp)$/).test(value) }
 
-module.exports={isValidEmail,isValidphone,isValidObjectId,isValidRequestBod,isValidName,isValidpassword,isValidCity,isValidPinCode,isValidProductName,isValidPrice,isValidateSize,isValidNo,isValidImage}
+module.exports={isValidEmail,isValidphone,isValidName,isValidpassword,isValidCity,isValidPinCode}
