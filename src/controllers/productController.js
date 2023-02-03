@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+let{isValidObjectId} = require("mongoose");
 const productModel = require("../models/productModel");
 const upload = require("../aws/aws");
 
@@ -226,5 +226,18 @@ exports.getProduct = async function (req, res) {
 // On success - Return HTTP status 200. Also return the product documents. The response should be a JSON object like this
 // On error - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like th
 
+module.exports.getProductById = async(req,res)=>{
+	try {
+		let productId = req.params.productId
+		if(!isValidObjectId(productId)) return res.status(400).send({ status: false, message: "Invalid productId" })
 
+		let data = await productModel.findOne({_id:productId},{isDeleted:false})
+		if(!data) return res.status(400).send({ status: false, message: "product not found" })
+
+		return res.status(200).send({ status: true, message: "Success", data: data })		
+		
+	} catch (error) {
+		return res.status(500).send({ status: false, message: error.message })
+	}
+}
 
