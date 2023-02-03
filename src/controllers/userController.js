@@ -204,6 +204,8 @@ module.exports.createUser = async (req, res) => {
     res.status(500).send({ status: false, message: error.message });
   }
 };
+
+
 module.exports.login = async (req, res) => {
   try {
     let data = req.body;

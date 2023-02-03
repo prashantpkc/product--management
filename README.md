@@ -124,7 +124,7 @@ On error - Return a suitable error message with a valid HTTP status code. The re
         "__v": 0
     }
 }
-PUT /user/:userId/profile (Authentication and Authorization required)
+###PUT /user/:userId/profile (Authentication and Authorization required)
 Allow an user to update their profile.
 A user can update all the fields
 Make sure that userId in url param and in token is same
