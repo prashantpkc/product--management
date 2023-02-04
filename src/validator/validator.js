@@ -19,9 +19,7 @@ const checkSpaceBtwWord = function (string) {
 }
 
 const isValidName = (value) => { return (/^[a-z/\s/A-Z|.|,]+$/).test(value)}
-
 const isValidpassword = (value) => { return (/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,15}$/.test(value)); }
-
 
 
 const isValidCity = (value) => { return (/^[A-za-z]+$/).test(value) }

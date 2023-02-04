@@ -12,19 +12,17 @@ const {
   isValidCity,
   isValidPinCode,
   isValidBody,
-  checkSpaceBtwWord
-  
+  checkSpaceBtwWord,
 } = require("../validator/validator");
 
 exports.createUser = async (req, res) => {
-  //doubt//
   try {
     let data = req.body;
     let files = req.files;
     let uploadUrl;
 
     if (files.length > 0) {
-      //doubt// clear
+     
       uploadUrl = await upload.uploadFile(files[0]); //doubt//
     } else {
       return res
@@ -40,71 +38,56 @@ exports.createUser = async (req, res) => {
         .send({ status: false, message: "body cant be empty" });
     }
 
-    // if (!fname) {
-    //   return res
-    //     .status(400)
-    //     .send({ status: false, message: "fname is required" });
-    // }
-    // if (!isValidName(fname))
-    //   return res.status(400).send({
-    //     status: false,
-    //     message: "please provide valid first name",
-    //   });
-    // //doubt//
-    // else {
-    //   fname = fname.trim();
-    // }
-    if (!isValidBody(fname)) return res.status(400).send({ status: false, Message: "Please provide your first name" })
+    if (!isValidBody(fname))
+      return res
+        .status(400)
+        .send({ status: false, Message: "Please provide your first name" });
 
     // this is used to remove spaces in between word.
-    fname= checkSpaceBtwWord(fname);
-    console.log(fname, "ghj")
+    fname = checkSpaceBtwWord(fname);
 
-    if (!fname.trim().match(/^[a-zA-Z ]{2,30}$/))
+    if (!isValidName(fname))
       return res.status(400).send({
         status: false,
         message: "Firstname should only contain alphabet",
-      })
-
-    if (!lname) {
+      });
+   
+    if (!isValidBody(lname))
       return res
         .status(400)
-        .send({ status: false, message: "lname is required" });
-    }
+        .send({ status: false, Message: "Please provide your last name" });
+
+    lname = checkSpaceBtwWord(lname);
     if (!isValidName(lname))
       return res
         .status(400)
-        .send({ status: false, message: "please provide valid last name" });
-    else {
-      lname = lname.trim();
-    }
+        .send({
+          status: false,
+          message: "Lastname should only contain alphabet",
+        });
 
-    if (!email) {
+    if (!isValidBody(email)) {
       return res
         .status(400)
         .send({ status: false, message: "email is required" });
     }
+    email = checkSpaceBtwWord(email);
     if (!isValidEmail(email))
       return res
         .status(400)
         .send({ status: false, message: "please provide valid email" });
-    else {
-      email = email.trim();
-    }
 
-    if (!phone) {
+    if (!isValidBody(phone)) {
       return res
         .status(400)
         .send({ status: false, message: "phone is required" });
     }
+    phone = checkSpaceBtwWord(phone);
     if (!isValidphone(phone))
       return res.status(400).send({
         status: false,
         message: "please provide valid indian phone number",
       });
-    else {
-      phone = phone.trim();
-    }
 
     if (!password) {
       return res
@@ -117,27 +100,25 @@ exports.createUser = async (req, res) => {
         message:
           "please provide valid password and password must contains minimum 8 characters and maximum 15 characters",
       });
-    else {
-      password = password.trim();
-    }
 
     let pwd = await bcrypt.hash(password, 10);
 
-    const checkEmail = await userModel.findOne({ email: email }); //doubt//
-    if (checkEmail)
-      return res
-        .status(409)
-        .send({ status: false, message: "email is already exits" }); // use one db call
+    const checkEmailAndPhone = await userModel.findOne({
+      $or: [{ email: email }, { phone: phone }],
+    }); 
+    if (checkEmailAndPhone) {
+      if (checkEmailAndPhone.email == email)
+        return res
+          .status(409)
+          .send({ status: false, message: "email is already exits" });
 
-    const checkPhone = await userModel.findOne({ phone: phone });
-    if (checkPhone)
-      return res
-        .status(409)
-        .send({ status: false, message: "phone is already exits" });
+      if (checkEmailAndPhone.phone == phone)
+        return res
+          .status(409)
+          .send({ status: false, message: "phone is already exits" });
+    }
 
     let newAddress = JSON.parse(address);
-
-    //***doubt***//
 
     let { shipping, billing } = newAddress;
 
@@ -203,7 +184,7 @@ exports.createUser = async (req, res) => {
       lname,
       email,
       phone,
-      password: pwd,
+      password:pwd,
       address: newAddress,
       profileImage: uploadUrl,
     };
@@ -220,7 +201,6 @@ exports.createUser = async (req, res) => {
     res.status(500).send({ status: false, message: error.message });
   }
 };
-
 
 module.exports.login = async (req, res) => {
   try {
@@ -294,38 +274,37 @@ exports.getUser = async (req, res) => {
 // UPDATE USER DETAILS
 
 exports.updateUser = async (req, res) => {
- try {
-	 let userId = req.params.userId;
-	  let data = req.body;
-	  let files = req.files;
-	
-	  if (files && files.length > 0) {
-	    data.profileImage = await upload.uploadFile(files[0]);
-	 } //else {
-	//     return res
-	//       .status(400)
-	//       .send({ status: false, message: "please give files" });
-	//   }
-	
-	  let { fname, lname, email, phone, password, address } = data;
-	
-	  if (Object.keys(data).length == 0)
-	    return res
-	      .status(400)
-	      .send({ status: false, message: "please provide data for update" });
-	
+  try {
+    let userId = req.params.userId;
+    let data = req.body;
+    let files = req.files;
 
-		  if(fname){
-	  if (!isValidName(fname) )
-	    return res.status(400).send({
-	      status: false,
-	      message: "please provide valid first name",
-	    });
-	  //doubt//
-	  else {
-	    fname = fname.trim();
-	  }
-	}
+    if (files && files.length > 0) {
+      data.profileImage = await upload.uploadFile(files[0]);
+    } //else {
+    //     return res
+    //       .status(400)
+    //       .send({ status: false, message: "please give files" });
+    //   }
+
+    let { fname, lname, email, phone, password, address } = data;
+
+    if (Object.keys(data).length == 0)
+      return res
+        .status(400)
+        .send({ status: false, message: "please provide data for update" });
+
+    if (fname) {
+      if (!isValidName(fname))
+        return res.status(400).send({
+          status: false,
+          message: "please provide valid first name",
+        });
+      //doubt//
+      else {
+        fname = fname.trim();
+      }
+    }
 
     if (lname) {
       if (!isValidName(lname) || data.lname == "")
@@ -337,91 +316,98 @@ exports.updateUser = async (req, res) => {
       }
     }
 
+    if (email) {
+      if (!isValidEmail(email))
+        return res
+          .status(400)
+          .send({ status: false, message: "please provide valid email" });
+      else {
+        email = email.trim();
+      }
+    }
 
-	if(email){
-	  if (!isValidEmail(email))
-	    return res
-	      .status(400)
-	      .send({ status: false, message: "please provide valid email" });
-	  else {
-	    email = email.trim();
-	  }
-	}
-	
+    if (phone) {
+      if (!isValidphone(phone))
+        return res.status(400).send({
+          status: false,
+          message: "please provide valid indian phone number",
+        });
+      else {
+        phone = phone.trim();
+      }
+    }
 
-	if(phone){
-	  if (!isValidphone(phone))
-	    return res.status(400).send({
-	      status: false,
-	      message: "please provide valid indian phone number",
-	    });
-	  else {
-	    phone = phone.trim();
-	  }
-	}
-	
-	if(password){
-	  if (!isValidpassword(password))
-	    return res.status(400).send({
-	      status: false,
-	      message:
-	        "please provide valid password and password must contains minimum 8 characters and maximum 15 characters",
-	    });
-	  else {
-	    password = password.trim();
-	  }
-	}
-	
-let newAddress
-	if(address){
-	   newAddress = JSON.parse(address);
-	
-	    if (typeof newAddress !== "object")
-	      return res
-	        .status(400)
-	        .send({ status: false, message: "Address must be in object" }); //***doubt***//
-	
-	    let { shipping, billing } = newAddress;
-	
-	
-	    if (!isValidCity(shipping.city))
-	      return res
-	        .status(400)
-	        .send({ status: false, message: "Invalid shipping city" });
-	
-	
-	    if (!isValidPinCode(shipping.pincode))
-	      return res
-	        .status(400)
-	        .send({ status: false, message: "Invalid Shipping pincode" });
-	
-	  
-	    if (!isValidCity(billing.city))
-	      return res
-	        .status(400)
-	        .send({ status: false, message: "Invalid Billing city" });
-	
-	  
-	    if (!isValidPinCode(billing.pincode))
-	      return res
-	        .status(400)
-	        .send({ status: false, message: "Invalid Billing pincode" });
-	}
-	
-		// let olduserData = await userModel.findById(userId)
-	
-		let dataToBeUpdate= {fname:fname,lname:lname,email:email,phone:phone,password:password,profileImage:data.profileImage,address:newAddress}
-	
-		const updateData = await userModel.findByIdAndUpdate({_id:userId},dataToBeUpdate,{new:true})
-	
-		return res.status(200).send({status:false,message:"User profile updated", data:updateData})
-} catch (error) {
-	console.log(error);
-	res.status(500).send({ status: false, message: error.message });
-	
-}
+    if (password) {
+      if (!isValidpassword(password))
+        return res.status(400).send({
+          status: false,
+          message:
+            "please provide valid password and password must contains minimum 8 characters and maximum 15 characters",
+        });
+      else {
+        password = password.trim();
+      }
+    }
 
+    let newAddress;
+    if (address) {
+      newAddress = JSON.parse(address);
 
+      if (typeof newAddress !== "object")
+        return res
+          .status(400)
+          .send({ status: false, message: "Address must be in object" }); //***doubt***//
 
+      let { shipping, billing } = newAddress;
 
+      if (!isValidCity(shipping.city))
+        return res
+          .status(400)
+          .send({ status: false, message: "Invalid shipping city" });
+
+      if (!isValidPinCode(shipping.pincode))
+        return res
+          .status(400)
+          .send({ status: false, message: "Invalid Shipping pincode" });
+
+      if (!isValidCity(billing.city))
+        return res
+          .status(400)
+          .send({ status: false, message: "Invalid Billing city" });
+
+      if (!isValidPinCode(billing.pincode))
+        return res
+          .status(400)
+          .send({ status: false, message: "Invalid Billing pincode" });
+    }
+
+    // let olduserData = await userModel.findById(userId)
+
+    let dataToBeUpdate = {
+      fname: fname,
+      lname: lname,
+      email: email,
+      phone: phone,
+      password: password,
+      profileImage: data.profileImage,
+      address: newAddress,
+    };
+
+    const updateData = await userModel.findByIdAndUpdate(
+      { _id: userId },
+      dataToBeUpdate,
+      { new: true }
+    );
+
+    return res
+      .status(200)
+      .send({
+        status: false,
+        message: "User profile updated",
+        data: updateData,
+      });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({ status: false, message: error.message });
+  }
 };
