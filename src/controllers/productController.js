@@ -10,6 +10,7 @@ const {
   isValidName,
   isValidateSize
 } = require("../validator/validator");
+const { findOne, findOneAndUpdate } = require("../models/userModel");
 
 module.exports.createProduct = async (req, res) => {
   try {
@@ -156,18 +157,6 @@ module.exports.createProduct = async (req, res) => {
 
 //===============================getProduct===================================================================//
 
-// Returns all products in the collection that aren't deleted.
-// Filters
-// Size (The key for this filter will be 'size')
-// Product name (The key for this filter will be 'name'). You should return all the products with name containing the substring recieved in this filter
-// Price : greater than or less than a specific value. The keys are 'priceGreaterThan' and 'priceLessThan'.
-// NOTE: For price filter request could contain both or any one of the keys. For example the query in the request could look like { priceGreaterThan: 500, priceLessThan: 2000 } or just { priceLessThan: 1000 } )
-
-// Sort
-// Sorted by product price in ascending or descending. The key value pair will look like {priceSort : 1} or {priceSort : -1} eg /products?size=XL&name=Nit%20grit
-// Response format
-// On success - Return HTTP status 200. Also return the product documents. The response should be a JSON object like this
-// On error - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like this
 
 exports.getProduct = async function (req, res) {
 
@@ -220,24 +209,174 @@ exports.getProduct = async function (req, res) {
     }
 }
 
-// ## GET /products/:productId
-// Returns product details by product id
-// Response format
-// On success - Return HTTP status 200. Also return the product documents. The response should be a JSON object like this
-// On error - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like th
+// GET PRODUCTS BY PRODUCTID
 
-module.exports.getProductById = async(req,res)=>{
+exports.getProductById = async(req,res)=>{
 	try {
 		let productId = req.params.productId
 		if(!isValidObjectId(productId)) return res.status(400).send({ status: false, message: "Invalid productId" })
 
-		let data = await productModel.findOne({_id:productId},{isDeleted:false})
-		if(!data) return res.status(400).send({ status: false, message: "product not found" })
+		let getdata = await productModel.findOne({_id:productId},{isDeleted:false})
+		if(!getdata) return res.status(400).send({ status: false, message: "product not found" })
 
-		return res.status(200).send({ status: true, message: "Success", data: data })		
+		return res.status(200).send({ status: true, message: "Success", data: getdata })		
 		
 	} catch (error) {
 		return res.status(500).send({ status: false, message: error.message })
 	}
 }
 
+/**
+ * ## PUT /products/:productId
+Updates a product by changing at least one or all fields
+Check if the productId exists (must have isDeleted false and is present in collection). If it doesn't, return an HTTP status 404 with a response body like this
+Response format
+On success - Return HTTP status 200. Also return the updated product document. The response should be a JSON object like this
+On error - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like this
+ */
+// UPDATE PRODUCT USING PRODUCTID
+
+exports.updateProductDetails = async (req, res) => {
+ try {
+   let productId = req.params.productId
+   let data = req.body
+   let files = req.files;
+   let uploadUrl;
+
+
+ 
+   if (files && files.length > 0) {
+     //doubt//
+     uploadUrl = await upload.uploadFile(files[0]); //doubt//
+   }
+ 
+ 
+   if(Object.keys(data).length==0){return res.status(400).send({status:false, message:"Please give some details for update"})}
+   if(!isValidObjectId(productId)){return res.status(400).send({status:false, message:"productId is not valid"})}
+  
+ 
+   let {  installments,
+     availableSizes,
+     isFreeShipping,
+     currencyFormat,
+     currencyId,
+     price,
+     description,
+     title,
+     style,} = data
+ 
+
+     //==============================
+      
+    
+     
+   if(title){
+   if (!isValidProductName(title))
+   return res
+     .status(400)
+     .send({ status: false, message: "please provide valid title" });
+ else {
+   title = title.trim();
+ }
+   }
+ 
+ if(price){
+ if (!isValidPrice(price))
+   return res
+     .status(400)
+     .send({ status: false, message: "please provide valid price" });
+ else {
+   price = price.trim();
+ }
+ }
+ 
+ if (availableSizes) {
+   availableSizes = availableSizes
+     .split(",")
+     .map((size) => size.trim().toUpperCase());
+   for (let i = 0; i < availableSizes.length; i++) {
+     if (
+       !["S", "XS", "M", "X", "L", "XXL", "XL"].includes(availableSizes[i])
+     )
+       return res
+         .status(400)
+         .send({
+           status: false,
+           message: "size can contain only S, XS,M, X, L, XXL, XL",
+         });
+   }
+ }
+ 
+ if(currencyFormat){
+ if (currencyFormat != "₹")
+   return res
+     .status(400)
+     .send({ status: false, message: "currency format should be ₹" });
+ }
+ 
+ 
+ if (installments) {
+   if (!isValidInstallments(installments))
+     return res
+       .status(400)
+       .send({
+         status: false,
+         message: "Installment must be an integer",
+       });
+ }
+
+ // check Duplicate Values 
+
+ let checkTitle = await productModel.findOne({ title: title })
+      if (checkTitle) return res.status(400).send({ status: false, message: "title is already present" })
+ 
+ 
+ let productData = {
+   title:title,
+   description :description,
+   price :price,
+   availableSizes :availableSizes,
+   installments :installments,
+   currencyFormat :currencyFormat,
+   style :style,
+   currencyId : currencyId,
+   isFreeShipping :isFreeShipping,
+   productImage: uploadUrl,
+ };
+ 
+     let updateData = await productModel.findOneAndUpdate({_id : productId, isDeleted:false}, productData,{new:true})
+ 
+     if(!updateData){{return res.status(404).send({status:false, message: `${productId} Id is not found`})}}
+ 
+     return res.status(200).send({status:true, message: "Success", data: updateData})
+     
+
+ } catch (error) {
+  return res.status(500).send({ status: false, message: error.message })
+ }
+
+}
+
+/**
+ * ## DELETE /products/:productId
+Deletes a product by product id if it's not already deleted
+Response format
+On success - Return HTTP status 200. The response should be a JSON object like this
+On error - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like this
+ */
+// DELETE PRODUCT DETAILS
+
+exports.deleteProducts = async (req,res) => {
+  try {
+    let  productId = req.params.productId
+    
+    if(!isValidObjectId(productId)){return res.status(400).send({status:false, message:"productId is not valid"})}
+    
+    let deleteData = await productModel.findByIdAndUpdate({_id:productId,isDeleted:false}, {$set:{isDeleted:true,deletedAt:Date.now()}}, {new:true})
+    if(!deleteData){return res.status(400).send({status:false, message:"data not found"})}
+  
+    return res.status(200).send({status:true, message:"successfully deleted"})
+  } catch (error) {
+    return res.status(500).send({ status: false, message: error.message })
+  }
+}
