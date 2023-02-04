@@ -90,7 +90,7 @@ On error - Return a suitable error message with a valid HTTP status code. The re
         "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MTYyODc2YWJkY2I3MGFmZWVhZjljZjUiLCJpYXQiOjE2MzM4NDczNzYsImV4cCI6MTYzMzg4MzM3Nn0.PgcBPLLg4J01Hyin-zR6BCk7JHBY-RpuWMG_oIK7aV8"
     }
 }
-GET /user/:userId/profile (Authentication required)
+## GET /user/:userId/profile (Authentication required)
 Allow an user to fetch details of their profile.
 Make sure that userId in url param and in token is same
 Response format
@@ -216,9 +216,9 @@ Deletes a product by product id if it's not already deleted
 Response format
 On success - Return HTTP status 200. The response should be a JSON object like this
 On error - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like this
-FEATURE III - Cart
+## FEATURE III - Cart
 Models
-Cart Model
+## Cart Model
 {
   userId: {ObjectId, refs to User, mandatory, unique},
   items: [{
