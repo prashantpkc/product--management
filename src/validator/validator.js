@@ -13,6 +13,10 @@ const isValidBody = function (Stringvalue) {
     return true;
   };
 
+const checkSpaceBtwWord = function (string) {
+    let str = string.split("").filter(x => x !== " ")
+      return string = str.join("");
+}
 
 const isValidName = (value) => { return (/^[a-z/\s/A-Z|.|,]+$/).test(value)}
 
@@ -30,4 +34,4 @@ const isValidInstallments = (value) => { return (/^\d*\.?\d*$/).test(value) }
 const isValidImage = (value) => { return (/\.(gif|jpe?g|tiff?|png|webp|bmp)$/).test(value) }
 
 
-module.exports={isValidEmail,isValidphone,isValidName,isValidpassword,isValidCity,isValidPinCode,isValidProductName,isValidPrice,isValidateSize,isValidNo,isValidImage,isValidInstallments,isValidBody}
+module.exports={isValidEmail,isValidphone,isValidName,isValidpassword,isValidCity,isValidPinCode,isValidProductName,isValidPrice,isValidateSize,isValidNo,isValidImage,isValidInstallments,isValidBody,checkSpaceBtwWord}
