@@ -10,9 +10,8 @@ const {
   isValidName,
   isValidateSize,
 } = require("../validator/validator");
-const { findOne, findOneAndUpdate } = require("../models/userModel");
 
-module.exports.createProduct = async (req, res) => {
+exports.createProduct = async (req, res) => {
   try {
     let data = req.body;
 
@@ -46,7 +45,7 @@ module.exports.createProduct = async (req, res) => {
         .send({ status: false, message: "please give files" });
     }
 
-    if (!title)
+    if (!isValidBody(title))
       return res
         .status(400)
         .send({ status: false, message: "title is required" });
@@ -54,16 +53,14 @@ module.exports.createProduct = async (req, res) => {
       return res
         .status(400)
         .send({ status: false, message: "please provide valid product name" });
-    else {
-      title = title.trim();
-    }
+   
 
-    if (!description)
+    if (!isValidBody(description))
       return res
         .status(400)
         .send({ status: false, message: "description is required" });
 
-    if (!price)
+    if (!isValidBody(price))
       return res
         .status(400)
         .send({ status: false, message: "price is required" });
@@ -71,11 +68,9 @@ module.exports.createProduct = async (req, res) => {
       return res
         .status(400)
         .send({ status: false, message: "please provide valid price" });
-    else {
-      price = price.trim();
-    }
+  
 
-    if (!availableSizes)
+    if (!isValidBody(availableSizes))
       return res
         .status(400)
         .send({ status: false, message: "availableSizes is required" });
@@ -95,7 +90,7 @@ module.exports.createProduct = async (req, res) => {
       }
     }
 
-    if (!currencyFormat)
+    if (!isValidBody(currencyFormat))
       return res
         .status(400)
         .send({ status: false, message: "currencyFormat is required" });
@@ -105,7 +100,7 @@ module.exports.createProduct = async (req, res) => {
         .status(400)
         .send({ status: false, message: "currency format should be ₹" });
 
-    if (!currencyId)
+    if (!isValidBody(currencyId))
       return res
         .status(400)
         .send({ status: false, message: "currencyId is required" });
@@ -268,14 +263,7 @@ exports.getProductById = async (req, res) => {
   }
 };
 
-/**
- * ## PUT /products/:productId
-Updates a product by changing at least one or all fields
-Check if the productId exists (must have isDeleted false and is present in collection). If it doesn't, return an HTTP status 404 with a response body like this
-Response format
-On success - Return HTTP status 200. Also return the updated product document. The response should be a JSON object like this
-On error - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like this
- */
+
 // UPDATE PRODUCT USING PRODUCTID
 
 exports.updateProductDetails = async (req, res) => {
@@ -305,7 +293,7 @@ exports.updateProductDetails = async (req, res) => {
     }
 
     let {
-      installments,
+      
       availableSizes,
       isFreeShipping,
       currencyFormat,
@@ -314,6 +302,7 @@ exports.updateProductDetails = async (req, res) => {
       description,
       title,
       style,
+      installments
     } = data;
 
     //==============================
@@ -370,11 +359,20 @@ exports.updateProductDetails = async (req, res) => {
 
     // check Duplicate Values
 
-    let checkTitle = await productModel.findOne({ title: title });
-    if (checkTitle)
-      return res
-        .status(400)
-        .send({ status: false, message: "title is already present" });
+    let checkDuplicateValues = await productModel.findOne({$or:[{ title: title} ,{description:description},{ price:price}, {availableSizes:availableSizes},{installments:installments}, {currencyFormat:currencyFormat}, {currencyId:currencyId}, {style:style}]});
+
+    
+    if(checkDuplicateValues){
+    if (checkDuplicateValues.title == title) {return res.status(400).send({ status: false, message: "title is already present" })}
+    if (checkDuplicateValues.description == description) {return res.status(400).send({ status: false, message: "description is already present" })}
+    if (checkDuplicateValues.price == price) {return res.status(400).send({ status: false, message: "price is already present" })}
+    if (checkDuplicateValues.availableSizes == availableSizes) {return res.status(400).send({ status: false, message: "availableSizes is already present" })}
+    if (checkDuplicateValues.installments == installments) {return res.status(400).send({ status: false, message: "installments is already present" })}
+    if (checkDuplicateValues.currencyFormat == currencyFormat) {return res.status(400).send({ status: false, message: "currencyFormat is already present" })}
+    if (checkDuplicateValues.currencyId == currencyId) {return res.status(400).send({ status: false, message: "currencyId is already present" })}
+    if (checkDuplicateValues.style == style) {return res.status(400).send({ status: false, message: "style is already present" })}
+
+    }
 
     let productData = {
       title: title,
@@ -411,13 +409,7 @@ exports.updateProductDetails = async (req, res) => {
   }
 };
 
-/**
- * ## DELETE /products/:productId
-Deletes a product by product id if it's not already deleted
-Response format
-On success - Return HTTP status 200. The response should be a JSON object like this
-On error - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like this
- */
+
 // DELETE PRODUCT DETAILS
 
 exports.deleteProducts = async (req, res) => {
