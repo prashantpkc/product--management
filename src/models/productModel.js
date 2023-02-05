@@ -11,7 +11,7 @@ const productSchema = new mongoose.Schema({
     isFreeShipping: {type: Boolean,default: false},
     productImage: {type: String,required: true},
     style: {type: String,trim: true},
-    availableSizes: {type: [String],enum: ["S", "XS", "M", "X", "L", "XXL", "XL"],required: true},
+    availableSizes: {type: [String],enum: ["S", "XS", "M", "X", "L", "XXL", "XL"], required: true},
     installments: {type: Number},
     deletedAt: {type: Date},
     isDeleted: {type: Boolean,default: false},

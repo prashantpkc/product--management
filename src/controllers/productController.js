@@ -70,25 +70,25 @@ exports.createProduct = async (req, res) => {
         .send({ status: false, message: "please provide valid price" });
   
 
-    if (!isValidBody(availableSizes))
-      return res
-        .status(400)
-        .send({ status: false, message: "availableSizes is required" });
+    if (!isValidBody(availableSizes)) return res.status(400).send({ status: false, message: "availableSizes is required" });
 
     if (availableSizes) {
-      availableSizes = availableSizes
-        .split(",")
-        .map((size) => size.trim().toUpperCase());
-      for (let i = 0; i < availableSizes.length; i++) {
-        if (
-          !["S", "XS", "M", "X", "L", "XXL", "XL"].includes(availableSizes[i])
-        )
-          return res.status(400).send({
-            status: false,
-            message: "size can contain only S, XS,M, X, L, XXL, XL",
-          });
+      var availableSize = availableSizes.toUpperCase().split(",") // Creating an array
+      if (availableSize.length === 0) {
+        return res.status(400).send({ status: false, message: "please provide the product sizes" })
       }
     }
+
+    let enumArr = ["S", "XS", "M", "X", "L", "XXL", "XL"]
+      for (let i = 0; i < availableSize.length; i++) {
+        // console.log(enumArr.includes(availableSize[i]), "fghjk");
+        if (!enumArr.includes(availableSize[i])) {
+          return res.status(400).send({
+            status: false,
+            message: `Sizes should be ${enumArr} value (with multiple value please give saperated by comma)`,
+          })
+        }
+      }
 
     if (!isValidBody(currencyFormat))
       return res
@@ -124,7 +124,7 @@ exports.createProduct = async (req, res) => {
       title,
       description,
       price,
-      availableSizes,
+      availableSizes: availableSize,
       installments,
       currencyFormat,
       style,
@@ -293,7 +293,6 @@ exports.updateProductDetails = async (req, res) => {
     }
 
     let {
-      
       availableSizes,
       isFreeShipping,
       currencyFormat,
@@ -328,9 +327,7 @@ exports.updateProductDetails = async (req, res) => {
     }
 
     if (availableSizes) {
-      availableSizes = availableSizes
-        .split(",")
-        .map((size) => size.trim().toUpperCase());
+      availableSizes = availableSizes.split(",").map((size) => size.trim().toUpperCase());
       for (let i = 0; i < availableSizes.length; i++) {
         if (
           !["S", "XS", "M", "X", "L", "XXL", "XL"].includes(availableSizes[i])
@@ -341,6 +338,8 @@ exports.updateProductDetails = async (req, res) => {
           });
       }
     }
+
+    
 
     if (currencyFormat) {
       if (currencyFormat != "₹")
@@ -357,22 +356,7 @@ exports.updateProductDetails = async (req, res) => {
         });
     }
 
-    // check Duplicate Values
-
-    let checkDuplicateValues = await productModel.findOne({$or:[{ title: title} ,{description:description},{ price:price}, {availableSizes:availableSizes},{installments:installments}, {currencyFormat:currencyFormat}, {currencyId:currencyId}, {style:style}]});
-
     
-    if(checkDuplicateValues){
-    if (checkDuplicateValues.title == title) {return res.status(400).send({ status: false, message: "title is already present" })}
-    if (checkDuplicateValues.description == description) {return res.status(400).send({ status: false, message: "description is already present" })}
-    if (checkDuplicateValues.price == price) {return res.status(400).send({ status: false, message: "price is already present" })}
-    if (checkDuplicateValues.availableSizes == availableSizes) {return res.status(400).send({ status: false, message: "availableSizes is already present" })}
-    if (checkDuplicateValues.installments == installments) {return res.status(400).send({ status: false, message: "installments is already present" })}
-    if (checkDuplicateValues.currencyFormat == currencyFormat) {return res.status(400).send({ status: false, message: "currencyFormat is already present" })}
-    if (checkDuplicateValues.currencyId == currencyId) {return res.status(400).send({ status: false, message: "currencyId is already present" })}
-    if (checkDuplicateValues.style == style) {return res.status(400).send({ status: false, message: "style is already present" })}
-
-    }
 
     let productData = {
       title: title,
