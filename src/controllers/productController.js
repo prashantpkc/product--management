@@ -53,7 +53,7 @@ exports.createProduct = async (req, res) => {
       return res
         .status(400)
         .send({ status: false, message: "please provide valid product name" });
-   
+
 
     if (!isValidBody(description))
       return res
@@ -68,7 +68,7 @@ exports.createProduct = async (req, res) => {
       return res
         .status(400)
         .send({ status: false, message: "please provide valid price" });
-  
+
 
     if (!isValidBody(availableSizes)) return res.status(400).send({ status: false, message: "availableSizes is required" });
 
@@ -80,15 +80,15 @@ exports.createProduct = async (req, res) => {
     }
 
     let enumArr = ["S", "XS", "M", "X", "L", "XXL", "XL"]
-      for (let i = 0; i < availableSize.length; i++) {
-        // console.log(enumArr.includes(availableSize[i]), "fghjk");
-        if (!enumArr.includes(availableSize[i])) {
-          return res.status(400).send({
-            status: false,
-            message: `Sizes should be ${enumArr} value (with multiple value please give saperated by comma)`,
-          })
-        }
+    for (let i = 0; i < availableSize.length; i++) {
+      // console.log(enumArr.includes(availableSize[i]), "fghjk");
+      if (!enumArr.includes(availableSize[i])) {
+        return res.status(400).send({
+          status: false,
+          message: `Sizes should be ${enumArr} value (with multiple value please give saperated by comma)`,
+        })
       }
+    }
 
     if (!isValidBody(currencyFormat))
       return res
@@ -339,7 +339,7 @@ exports.updateProductDetails = async (req, res) => {
       }
     }
 
-    
+
 
     if (currencyFormat) {
       if (currencyFormat != "₹")
@@ -356,7 +356,7 @@ exports.updateProductDetails = async (req, res) => {
         });
     }
 
-    
+
 
     let productData = {
       title: title,
