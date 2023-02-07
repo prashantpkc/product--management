@@ -106,11 +106,13 @@ exports.updateCart = async function (req, res) {
        
        if (!cartId) return res.status(400).send({ status: false, message: "please enter your cartId" })
        if (!isValidObjectId(cartId)) return res.status(400).send({ status: false, message: "card Id is invalid" })
+       
        const findCart = await cartModel.findOne({ _id: cartId })
        if (!findCart) return res.status(404).send({ status: false, message: "Cart id not exist" })
   
        if (!productId) return res.status(400).send({ status: false, message: "please enter your productId" })
        if (!isValidObjectId(productId)) return res.status(400).send({ status: false, message: "product Id is invalid" })
+
        const findProduct = await productModel.findOne({ _id: productId, isDeleted: false })
        if (!findProduct) return res.status(404).send({ status: false, message: "product does not not exist" })
   
