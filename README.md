@@ -260,7 +260,7 @@ Check if the productId exists and is not deleted before updating the cart.
 Response format
 On success - Return HTTP status 200. Also return the updated cart document. The response should be a JSON object like this
 On error - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like this
-GET /users/:userId/cart
+## GET /users/:userId/cart
 Returns cart summary of the user.
 Make sure that cart exist.
 Make sure the userId in params and in JWT token match.
@@ -269,7 +269,7 @@ Get product(s) details in response body.
 Response format
 On success - Return HTTP status 200. Return the cart document. The response should be a JSON object like this
 On error - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like this
-DELETE /users/:userId/cart
+## DELETE /users/:userId/cart
 Deletes the cart for the user.
 Make sure that cart exist.
 Make sure the userId in params and in JWT token match.
