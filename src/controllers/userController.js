@@ -4,7 +4,7 @@ const upload = require("../aws/aws");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const { isValidEmail, isValidphone, isValidName, isValidpassword, isValidCity, isValidPinCode, isValidBody,
+let { isValidEmail, isValidphone, isValidName, isValidpassword, isValidCity, isValidPinCode, isValidBody,
   checkSpaceBtwWord,
 } = require("../validator/validator");
 
@@ -134,9 +134,97 @@ exports.getUser = async (req, res) => {
 
 // UPDATE USER DETAILS
 
-exports.updateUser = async (req, res) => {
-  try {
-    let userId = req.params.userId;
+// exports.updateUser = async (req, res) => {
+//   try {
+//     let userId = req.params.userId;
+//     let data = req.body;
+//     let files = req.files;
+
+//     if (files && files.length > 0) {
+//       data.profileImage = await upload.uploadFile(files[0]);
+//     }
+//     let { fname, lname, email, phone, password, address } = data;
+
+//     if (Object.keys(data).length == 0)
+//       return res.status(400).send({ status: false, message: "please provide data for update" });
+
+//     if (fname) {
+//       if (!isValidName(fname)) return res.status(400).send({ status: false, message: "please provide valid first name", });
+//       fname = checkSpaceBtwWord(fname);
+//       fname = fname.trim();
+//     }
+//     if (lname) {
+//       if (!isValidName(lname)) return res.status(400).send({ status: false, message: "please provide valid last name" });
+//       lname = checkSpaceBtwWord(lname);
+//       lname = lname.trim();
+//     }
+//     if (email) {
+//       if (!isValidEmail(email)) return res.status(400).send({ status: false, message: "please provide valid email" });
+//       email = checkSpaceBtwWord(email);
+//       email = email.trim();
+//     }
+//     if (phone) {
+//       if (!isValidphone(phone)) return res.status(400).send({ status: false, message: "please provide valid indian phone number" });
+//       phone = checkSpaceBtwWord(phone);
+//       phone = phone.trim();
+//     }
+//     if (password) {
+//       if (!isValidpassword(password)) return res.status(400).send({
+//         status: false, message: "please provide valid password and password must contains minimum 8 characters and maximum 15 characters",
+//       });
+//     }
+
+//     address = JSON.parse(address)
+
+//     if (typeof address !== "object")
+//       return res.status(400).send({ status: false, message: "Address must be in object" });
+//     let { shipping, billing } = address;
+
+    
+//       if (!isValidCity(shipping?.city)) return res.status(400).send({ status: false, message: "Invalid shipping city" });
+//       if (!isValidPinCode(shipping?.pincode)) return res.status(400).send({ status: false, message: "Invalid Shipping pincode" });
+    
+
+    
+//       if (!isValidCity(billing?.city)) return res.status(400).send({ status: false, message: "Invalid Billing city" });
+//       if (!isValidPinCode(billing?.pincode)) return res.status(400).send({ status: false, message: "Invalid Billing pincode" });
+    
+//     let oldUserData = await userModel.findById(userId)
+
+//     let dataToBeUpdate = {
+//       fname: fname,
+//       lname: lname,
+//       email: email,
+//       phone: phone,
+//       password: password,
+//       profileImage: data.profileImage,
+//       address: {
+//         shipping: {
+//           street: shipping?.street || oldUserData.address.shipping.street,
+//           city: shipping?.city || oldUserData.address.shipping.city,
+//           pincode: shipping?.pincode || oldUserData.address.shipping.pincode,
+//         },
+//         billing: {
+//           street: billing?.street || oldUserData.address.billing.street,
+//           city: billing?.city || oldUserData.address.billing.city,
+//           pincode: billing?.pincode || oldUserData.address.billing.pincode,
+//         },
+//       },
+//     };
+
+//     const updateData = await userModel.findByIdAndUpdate({ _id: userId }, dataToBeUpdate, { new: true });
+
+//     return res.status(200).send({ status: false, message: "User profile updated", data: updateData });
+    
+//   } catch (error) {
+//     res.status(500).send({ status: false, message: error.message });
+//   }
+// };
+
+
+exports.updateUser = async function(req,res){
+  try{
+        let userId = req.params.userId;
     let data = req.body;
     let files = req.files;
 
@@ -145,53 +233,56 @@ exports.updateUser = async (req, res) => {
     }
     let { fname, lname, email, phone, password, address } = data;
 
-    if (Object.keys(data).length == 0)
-      return res.status(400).send({ status: false, message: "please provide data for update" });
+    if (Object.keys(data).length == 0) return res.status(400).send({ status: false, message: "body cant be empty" });
 
-    if (fname) {
-      if (!isValidName(fname)) return res.status(400).send({ status: false, message: "please provide valid first name", });
-      fname = checkSpaceBtwWord(fname);
-      fname = fname.trim();
-    }
-    if (lname) {
-      if (!isValidName(lname)) return res.status(400).send({ status: false, message: "please provide valid last name" });
-      lname = checkSpaceBtwWord(lname);
-      lname = lname.trim();
-    }
-    if (email) {
-      if (!isValidEmail(email)) return res.status(400).send({ status: false, message: "please provide valid email" });
-      email = checkSpaceBtwWord(email);
-      email = email.trim();
-    }
-    if (phone) {
-      if (!isValidphone(phone)) return res.status(400).send({ status: false, message: "please provide valid indian phone number" });
-      phone = checkSpaceBtwWord(phone);
-      phone = phone.trim();
-    }
-    if (password) {
-      if (!isValidpassword(password)) return res.status(400).send({
-        status: false, message: "please provide valid password and password must contains minimum 8 characters and maximum 15 characters",
-      });
-    }
+      if(fname){
+          if(!isValidName(fname)) return res.status(400).send({status:false,message:"please provide valid fname"})
+      }
+      if(lname){
+          if(!isValidName(lname)) return res.status(400).send({status:false,message:"please provide valid lname"})
+      }
+      if(email) {
+          if(!isValidEmail(email)) return res.status(400).send({status:false,message:"please provide valid email"})
+      }
+      if(password){
+          if(!isValidpassword(password))  return res.status(400).send({status:false,message:"please provide valid password"})
+          body.password=await bcrypt.hash(password,10) 
+      }
+      if(phone){
+          if(!isValidphone(phone)) return res.status(400).send({status:false,message:"Please provide valid phone number"})
+      }
+     
+      if(address){
+  try {
+      if(typeof req.body.address !== 'object') 
+      address = JSON.parse(address)
+      console.log(address);
 
-    address = JSON.parse(address)
+  } catch (err) {
+    return res.status(400).send({status:false,message:"Enter Valid JSON Address !"})
+  }
+      
+      if(address?.shipping){
+          if(!isValidCity(address.shipping.city)){
+              return res.status(400).send({status:false,message:"Please provide valid city"})
+          }
+          
+          // if(!isValidPinCode(address.shipping.pincode)){
+          //     return res.status(400).send({status:false,message:"please provide valid pincode"})
+          // }
+      }
+      if(address?.billing){
+          if(!isValidCity(address.billing.city)){
+              return res.status(400).send({status:false,message:"Please provide valid city"})
+          }
+          // if(!isValidPinCode(address.billing.pincode)){
+          //     return res.status(400).send({status:false,message:"please provide valid pincode"})
+          // }
+      }}
 
-    if (typeof address !== "object")
-      return res.status(400).send({ status: false, message: "Address must be in object" });
-    let { shipping, billing } = address;
-
-    if (shipping) {
-      if (!isValidCity(shipping.city)) return res.status(400).send({ status: false, message: "Invalid shipping city" });
-      if (!isValidPinCode(shipping.pincode)) return res.status(400).send({ status: false, message: "Invalid Shipping pincode" });
-    }
-
-    if (billing) {
-      if (!isValidCity(billing.city)) return res.status(400).send({ status: false, message: "Invalid Billing city" });
-      if (!isValidPinCode(billing.pincode)) return res.status(400).send({ status: false, message: "Invalid Billing pincode" });
-    }
-    let oldUserData = await userModel.findById(userId)
-
-    let dataToBeUpdate = {
+          let oldUserData = await userModel.findById(userId)
+      
+     let dataToBeUpdate = {
       fname: fname,
       lname: lname,
       email: email,
@@ -200,14 +291,14 @@ exports.updateUser = async (req, res) => {
       profileImage: data.profileImage,
       address: {
         shipping: {
-          street: shipping?.street || oldUserData.address.shipping.street,
-          city: shipping?.city || oldUserData.address.shipping.city,
-          pincode: shipping?.pincode || oldUserData.address.shipping.pincode,
+          street: address?.shipping?.street || oldUserData.address.shipping.street,
+          city: address?.shipping?.city || oldUserData.address.shipping.city,
+          pincode: address?.shipping?.pincode || oldUserData.address.shipping.pincode,
         },
         billing: {
-          street: billing?.street || oldUserData.address.billing.street,
-          city: billing?.city || oldUserData.address.billing.city,
-          pincode: billing?.pincode || oldUserData.address.billing.pincode,
+          street: address?.billing?.street || oldUserData.address.billing.street,
+          city: address?.billing?.city || oldUserData.address.billing.city,
+          pincode: address?.billing?.pincode || oldUserData.address.billing.pincode,
         },
       },
     };
@@ -215,11 +306,8 @@ exports.updateUser = async (req, res) => {
     const updateData = await userModel.findByIdAndUpdate({ _id: userId }, dataToBeUpdate, { new: true });
 
     return res.status(200).send({ status: false, message: "User profile updated", data: updateData });
-    
-  } catch (error) {
-    res.status(500).send({ status: false, message: error.message });
+
+  } catch(err){
+      return res.status(500).send({status:false,message:err.message})
   }
-};
-
-
-
+}

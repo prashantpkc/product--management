@@ -100,7 +100,7 @@ exports.updateCart = async function (req, res) {
   
        let { cartId, productId, removeProduct } = data
       
-      // if (!isValidRequestBody(data)) return res.status(400).send({ status: false, message: "Body should not be empty" })
+      
        let findUser = await userModel.findById({ _id: userId })
        if (!findUser) return res.status(404).send({ status: false, message: "User not found" })
        

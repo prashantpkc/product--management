@@ -4,9 +4,10 @@ const router = express.Router()
 const { createUser, login, getUser, updateUser } = require("../controllers/userController")
 const { createProduct, getProduct, getProductById, updateProductDetails, deleteProducts } = require("../controllers/productController")
 const { createCart, updateCart, getCart, deleteCart } = require("../controllers/cartController")
+const { createOrder, updateOrder } = require("../controllers/orderController")
 const { authenticate, authorize } = require("../middleWare/auth")
 
-//      USER API
+//User API
 
 router.post("/register", createUser)
 router.post("/login", login)
@@ -28,9 +29,12 @@ router.put("/users/:userId/cart", authenticate, authorize, updateCart)
 router.get("/users/:userId/cart", authenticate, authorize, getCart)
 router.delete("/users/:userId/cart", authenticate, authorize, deleteCart)
 
+//Order API
 
+router.post('/users/:userId/orders', authenticate, authorize, createOrder)
+router.put('/users/:userId/orders', authenticate, authorize, updateOrder)
 
-
+//HTTP
 
 router.all("/*", (req, res) => {
     res.status(400).send({ status: false, message: "HTTP path invalid" })

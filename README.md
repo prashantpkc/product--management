@@ -297,15 +297,18 @@ Order Model
   createdAt: {timestamp},
   updatedAt: {timestamp},
 }
+
 Checkout/Order APIs (Authentication and authorization required)
 POST /users/:userId/orders
 Create an order for the user
 Make sure the userId in params and in JWT token match.
 Make sure the user exist
 Get cart details in the request body
+
 Response format
 On success - Return HTTP status 200. Also return the order document. The response should be a JSON object like this
 On error - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like this
+
 PUT /users/:userId/orders
 Updates an order status
 Make sure the userId in params and in JWT token match.
@@ -313,6 +316,7 @@ Make sure the user exist
 Get order id in request body
 Make sure the order belongs to the user
 Make sure that only a cancellable order could be canceled. Else send an appropriate error message and response.
+
 Response format
 On success - Return HTTP status 200. Also return the updated order document. The response should be a JSON object like this
 On error - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like this
