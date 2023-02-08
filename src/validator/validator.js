@@ -23,7 +23,9 @@ const isValidpassword = (value) => { return (/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8
 
 
 const isValidCity = (value) => { return (/^[A-za-z]+$/).test(value) }
+
 const isValidPinCode = (value) => { return (/^[1-9][0-9]{5}$/).test(value) }
+
 const isValidProductName = (value) => { return (/^[A-Za-z]+|[A-Za-z]+\[0-9]+$/).test(value) }
 const isValidPrice = (value) => { return (/^(?:0|[1-9]\d*)(?:\.(?!.*000)\d+)?$/).test(value) }
 const isValidateSize = (value) => { return ["S", "XS", "M", "X", "L", "XXL", "XL"].indexOf(value) !== -1 }

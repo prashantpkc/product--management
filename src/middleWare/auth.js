@@ -41,6 +41,8 @@ exports.authorize= async function ( req, res, next) {
 
           let gettingUserId= await userModel.findById({_id: userId})
           if(!gettingUserId) return res.status(404).send({status:false,message:"this userId is not found"})
+          
+          req.userDetails = gettingUserId
 
           if ( userId !=req.decode.userId)  return res.status(403).send({ status: false, message: "you are not Athorised" });
 

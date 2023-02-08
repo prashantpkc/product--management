@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema(
+const userSchema = new mongoose.Schema(  //it is inbuilt function to create schema
   {
     fname: { type: String, required: true },
     lname: { type: String, required: true },
@@ -25,3 +25,8 @@ const userSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model("user", userSchema);
+
+// diff btw model and schema
+
+// schema defines the structure of our document
+// model provides an interface to the database for crud operation
