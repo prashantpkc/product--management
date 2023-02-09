@@ -11,8 +11,6 @@ exports.authenticate = (req, res, next) => {
     try{
           let token = req.headers["authorization"];
 
-      //     let userId = req.params.userId
-      //     if(!mongoose.isValidObjectId(userId)) return res.status(400).send({status:false,message:"Inavlid userId"})
 
           if (!token) return res.status(400).send({ status: false, msg: "token must be present" });
 
@@ -22,7 +20,6 @@ exports.authenticate = (req, res, next) => {
           jwt.verify(bearerToken, "Project-5-productsManagement", function (err, decode) {
           if (err) { return res.status(401).send({ status: false, message: err.message }) }
           req.decode = decode;
-      //     if ( userId !=req.decode.userId)  return res.status(401).send({ status: false, message: "you are not allowed to access the resource" });
            next();
       })
     }
@@ -37,14 +34,14 @@ exports.authorize= async function ( req, res, next) {
     try{
           let userId= req.params.userId
 
-          if(!mongoose.isValidObjectId(userId)) return res.status(400).send({status:false,message:"Inavlid userId"})
+          if(!mongoose.isValidObjectId(userId)) return res.status(400).send({status:false,message:"Invalid userId"})
 
           let gettingUserId= await userModel.findById({_id: userId})
           if(!gettingUserId) return res.status(404).send({status:false,message:"this userId is not found"})
           
           req.userDetails = gettingUserId
 
-          if ( userId !=req.decode.userId)  return res.status(403).send({ status: false, message: "you are not Athorised" });
+          if ( userId !=req.decode.userId)  return res.status(403).send({ status: false, message: "you are not Athorised to do this" });
 
           return next()
     }catch(error){

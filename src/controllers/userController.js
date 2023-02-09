@@ -110,8 +110,8 @@ module.exports.login = async (req, res) => {
 
     let user = findCredential._id; // use bcrypt
 
-    let token = jwt.sign({ userId: user, }, "Project-5-productsManagement", { expiresIn: "1h" });
-    //res.bearerToken
+    let token = jwt.sign({ userId: user, }, "Project-5-productsManagement", { expiresIn: "2h" });
+ 
     return res.status(200).send({ status: true, message: "User login successfull", data: { userId: user, token: token } });
   } catch (error) {
     res.status(500).send({ status: false, message: error.message });
@@ -178,7 +178,6 @@ exports.updateUser = async function (req, res) {
         if (street) {
           tempAddress.shipping.street = street
         }
-
 
         if (city) {
           if (!isValidCity(city)) {

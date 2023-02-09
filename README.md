@@ -299,7 +299,7 @@ Order Model
 }
 
 Checkout/Order APIs (Authentication and authorization required)
-POST /users/:userId/orders
+  ## POST /users/:userId/orders
 Create an order for the user
 Make sure the userId in params and in JWT token match.
 Make sure the user exist
@@ -309,7 +309,7 @@ Response format
 On success - Return HTTP status 200. Also return the order document. The response should be a JSON object like this
 On error - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like this
 
-PUT /users/:userId/orders
+## PUT /users/:userId/orders
 Updates an order status
 Make sure the userId in params and in JWT token match.
 Make sure the user exist

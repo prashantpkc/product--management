@@ -38,7 +38,7 @@ exports.createCart = async (req, res) => {
 
             let checkId = await cartModel.findOne({userId:userId})
 
-            if(checkId) return res.status(400).send({ status: false, message: "plz provide cartid" })
+            if(checkId) return res.status(400).send({ status: false, message: "plz provide  valid cartid" })
 
             let createCart = await cartModel.create(data)
             return res.status(201).send({ status: true, message: "Success", data: createCart })
@@ -48,7 +48,6 @@ exports.createCart = async (req, res) => {
             let items = cartData.items
             let totalPrice = cartData.totalPrice
             let totalItems = cartData.totalItems
-
 
             let flag = 0;
 
@@ -99,7 +98,6 @@ exports.updateCart = async function (req, res) {
        let userId = req.params.userId
   
        let { cartId, productId, removeProduct } = data
-      
       
        let findUser = await userModel.findById({ _id: userId })
        if (!findUser) return res.status(404).send({ status: false, message: "User not found" })
