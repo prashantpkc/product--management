@@ -18,8 +18,8 @@ exports.createOrder = async (req, res) => {
 
     if (!isValidObjectId(cartId)) return res.status(400).send({ status: false, message: "Please provide valid cartId!" });
 
-    let cartItems = await cartModel.findOne({ _id: cartId, userId: userId, isDeleted: false })
-    if (!cartItems) return res.status(400).send({ status: false, message: "Either cart is empty or does not exist!" });
+    let cartItems = await cartModel.findOne({ _id: cartId, userId: userId })
+    if (!cartItems) return res.status(404).send({ status: false, message: "Cart is Not found!" });
 
     let items = cartItems.items
     let totalQuantity = 0
