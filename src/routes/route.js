@@ -34,7 +34,7 @@ router.delete("/users/:userId/cart", authenticate, authorize, deleteCart)
 router.post('/users/:userId/orders', authenticate, authorize, createOrder)
 router.put('/users/:userId/orders', authenticate, authorize, updateOrder)
 
-//HTTP
+//HTTP validation
 
 router.all("/*", (req, res) => {
     res.status(400).send({ status: false, message: "HTTP path invalid" })

@@ -21,7 +21,6 @@ exports.createOrder = async (req, res) => {
     let cartItems = await cartModel.findOne({ _id: cartId, userId: userId, isDeleted: false })
     if (!cartItems) return res.status(400).send({ status: false, message: "Either cart is empty or does not exist!" });
 
-    //products quantity update
     let items = cartItems.items
     let totalQuantity = 0
     
@@ -99,6 +98,6 @@ exports.updateOrder = async (req, res) => {
     
     return res.status(200).send({ status: true, message: "Success", data: orderCancel });
   } catch (err) {
-    return res.status(500).send({ message: err.message })
+    return res.status(500).send({ status:false , message: err.message })
   }
 }

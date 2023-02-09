@@ -25,7 +25,7 @@ exports.createUser = async (req, res) => {
     if (Object.keys(data).length == 0) return res.status(400).send({ status: false, message: "body cant be empty" });
 
     if (!isValidBody(fname)) return res.status(400).send({ status: false, Message: "Please provide your first name" });
-    // this is used to remove spaces in between word and trim.
+   
     fname = checkSpaceBtwWord(fname);
     
     if (!isValidName(fname)) return res.status(400).send({ status: false, message: "Firstname should only contain alphabet" });
@@ -47,7 +47,7 @@ exports.createUser = async (req, res) => {
     if (!password) return res.status(400).send({ status: false, message: "password is required" });
     if (!isValidpassword(password)) return res.status(400).send({ status: false, message: "please provide valid password and password must contains minimum 8 characters and maximum 15 characters" });
 
-    let pwd = await bcrypt.hash(password, 10);// it is used to hashing the password
+    let pwd = await bcrypt.hash(password, 10);
 
     const checkEmailAndPhone = await userModel.findOne({ $or: [{ email: email }, { phone: phone }] });
     if (checkEmailAndPhone) {
@@ -89,12 +89,12 @@ exports.createUser = async (req, res) => {
 
     return res.status(201).send({ status: true, message: "User created successfully", data: saveData });
   } catch (error) {
-    console.log(error.message);
+    
     res.status(500).send({ status: false, message: error.message });
   }
 };
 
-module.exports.login = async (req, res) => {
+exports.login = async (req, res) => {
   try {
     let data = req.body;
     let { email, password } = data;
@@ -108,7 +108,7 @@ module.exports.login = async (req, res) => {
     let checkPass = await bcrypt.compare(password, findCredential.password);
     if (!checkPass) return res.status(400).send({ status: false, message: "password is incorrect" });
 
-    let user = findCredential._id; // use bcrypt
+    let user = findCredential._id; 
 
     let token = jwt.sign({ userId: user, }, "Project-5-productsManagement", { expiresIn: "2h" });
  

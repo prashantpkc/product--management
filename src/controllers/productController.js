@@ -22,21 +22,21 @@ exports.createProduct = async (req, res) => {
     } else { return res.status(400).send({ status: false, message: "please give files" }) }
 
 
-    if (!title) return res.status(400).send({ status: false, message: "title key required" })
+    if (!title) return res.status(400).send({ status: false, message: "title is required" })
     title = title.trim()
     if (!isValidBody(title)) return res.status(400).send({ status: false, message: "title is required" });
     if (!isValidProductName(title)) return res.status(400).send({ status: false, message: "please provide valid product name" });
 
-    if (!description) return res.status(400).send({ status: false, message: "description key required" })
+    if (!description) return res.status(400).send({ status: false, message: "description is required" })
     description = description.trim()
     if (!isValidBody(description)) return res.status(400).send({ status: false, message: "description is required" });
 
-    if (!price) return res.status(400).send({ status: false, message: "price key required" })
+    if (!price) return res.status(400).send({ status: false, message: "price is required" })
     price = price.trim()
     if (!isValidBody(price)) return res.status(400).send({ status: false, message: "price is required" });
     if (!isValidPrice(price)) return res.status(400).send({ status: false, message: "please provide valid price" });
 
-    if (!availableSizes) return res.status(400).send({ status: false, message: "availableSizes key required" })
+    if (!availableSizes) return res.status(400).send({ status: false, message: "availableSizes is required" })
 
     if (!isValidBody(availableSizes)) return res.status(400).send({ status: false, message: "availableSizes is required" });
 availableSizes = availableSizes.trim()
@@ -48,12 +48,12 @@ availableSizes = availableSizes.trim()
       }
     }
 
-    if (!currencyFormat) return res.status(400).send({ status: false, message: "currencyFormat key required" })
+    if (!currencyFormat) return res.status(400).send({ status: false, message: "currencyFormat is required" })
    currencyFormat =currencyFormat.trim()
     if (!isValidBody(currencyFormat)) return res.status(400).send({ status: false, message: "currencyFormat is required" });
     if (currencyFormat != "₹") return res.status(400).send({ status: false, message: "currency format should be ₹" });
 
-    if (!currencyId) return res.status(400).send({ status: false, message: "currencyId key required" })
+    if (!currencyId) return res.status(400).send({ status: false, message: "currencyId is required" })
     currencyId = currencyId.trim()
     if (!isValidBody(currencyId)) return res.status(400).send({ status: false, message: "currencyId is required" });
     if (!isValidCurrencyId(currencyId)) return res.status(400).send({ status: false, message: "currencyId must be INR" });
@@ -76,7 +76,6 @@ availableSizes = availableSizes.trim()
 
     return res.status(201).send({ status: false, message: "Success", data: createProduct });
   } catch (error) {
-    console.log(error.message);
     res.status(500).send({ status: false, message: error.message });
   }
 };
@@ -92,8 +91,6 @@ exports.getProduct = async function (req, res) {
 
     let obj = { isDeleted: false };
 
-
-    
     if (size) {
       if (!isValidBody(size)) return res.status(400).send({ status: false, message: "Please enter Size" });
       if (!isValidateSize(size)) return res.status(400).send({ status: false, message: "only use[S, XS, M, X, L, XXL, XL]" });
@@ -241,7 +238,7 @@ exports.deleteProducts = async (req, res) => {
     }
 
     let deleteData = await productModel.findOneAndUpdate({ _id: productId, isDeleted: false }, { $set: { isDeleted: true, deletedAt: Date.now() } }, { new: true });
-   console.log(deleteData)
+
     if (!deleteData) return res.status(400).send({ status: false, message: "product not found" });
 
     return res.status(200).send({ status: true, message: "successfully deleted" });
