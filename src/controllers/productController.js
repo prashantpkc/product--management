@@ -19,33 +19,25 @@ exports.createProduct = async (req, res) => {
       uploadUrl = await upload.uploadFile(files[0]);
     } else { return res.status(400).send({ status: false, message: "please give files" }) }
 
+
+    if (!title) return res.status(400).send({ status: false, message: "title key required" })
+    title = title.trim()
     if (!isValidBody(title)) return res.status(400).send({ status: false, message: "title is required" });
     if (!isValidProductName(title)) return res.status(400).send({ status: false, message: "please provide valid product name" });
 
-
+    if (!description) return res.status(400).send({ status: false, message: "description key required" })
+    description = description.trim()
     if (!isValidBody(description)) return res.status(400).send({ status: false, message: "description is required" });
 
+    if (!price) return res.status(400).send({ status: false, message: "price key required" })
+    price = price.trim()
     if (!isValidBody(price)) return res.status(400).send({ status: false, message: "price is required" });
     if (!isValidPrice(price)) return res.status(400).send({ status: false, message: "please provide valid price" });
 
+    if (!availableSizes) return res.status(400).send({ status: false, message: "availableSizes key required" })
 
     if (!isValidBody(availableSizes)) return res.status(400).send({ status: false, message: "availableSizes is required" });
-
-    // if (availableSizes) {
-    //   var availableSize = availableSizes.toUpperCase().split(",") // Creating an array
-    //   if (availableSize.length === 0) {
-    //     return res.status(400).send({ status: false, message: "please provide the product sizes" })
-    //   }
-    // }
-
-    // let enumArr = ["S", "XS", "M", "X", "L", "XXL", "XL"]
-    // for (let i = 0; i < availableSize.length; i++) {
-    //   // console.log(enumArr.includes(availableSize[i]), "fghjk");
-    //   if (!enumArr.includes(availableSize[i])) {
-    //     return res.status(400).send({  status: false,  message: `Sizes should be ${enumArr} value (with multiple value please give saperated by comma)`,
-    //     })
-    //   }
-    // }
+availableSizes = availableSizes.trim()
     if (availableSizes) {
       availableSizes = availableSizes.split(",").map((size) => size.trim().toUpperCase());
       for (let i = 0; i < availableSizes.length; i++) {
@@ -54,10 +46,13 @@ exports.createProduct = async (req, res) => {
       }
     }
 
+    if (!currencyFormat) return res.status(400).send({ status: false, message: "currencyFormat key required" })
+   currencyFormat =currencyFormat.trim()
     if (!isValidBody(currencyFormat)) return res.status(400).send({ status: false, message: "currencyFormat is required" });
     if (currencyFormat != "₹") return res.status(400).send({ status: false, message: "currency format should be ₹" });
 
-
+    if (!currencyId) return res.status(400).send({ status: false, message: "currencyId key required" })
+    currencyId = currencyId.trim()
     if (!isValidBody(currencyId)) return res.status(400).send({ status: false, message: "currencyId is required" });
     if (!isValidCurrencyId(currencyId)) return res.status(400).send({ status: false, message: "currencyId must be INR" });
 
@@ -91,8 +86,12 @@ exports.getProduct = async function (req, res) {
     let data = req.query;
     let { size, name, priceGreaterThan, priceLessThan, priceSort } = data;
 
+    // if (!size || !name || !priceGreaterThan || !priceLessThan || !priceSort) return res.status(400).send({ status: false, message: "invalid query" })
+
     let obj = { isDeleted: false };
 
+
+    
     if (size) {
       if (!isValidBody(size)) return res.status(400).send({ status: false, message: "Please enter Size" });
       if (!isValidateSize(size)) return res.status(400).send({ status: false, message: "only use[S, XS, M, X, L, XXL, XL]" });
@@ -241,7 +240,7 @@ exports.deleteProducts = async (req, res) => {
     }
 
     let deleteData = await productModel.findByIdAndUpdate({ _id: productId, isDeleted: false }, { $set: { isDeleted: true, deletedAt: Date.now() } }, { new: true });
-    
+
     if (!deleteData) return res.status(400).send({ status: false, message: "data not found" });
 
     return res.status(200).send({ status: true, message: "successfully deleted" });

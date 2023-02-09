@@ -25,10 +25,11 @@ exports.createUser = async (req, res) => {
     if (Object.keys(data).length == 0) return res.status(400).send({ status: false, message: "body cant be empty" });
 
     if (!isValidBody(fname)) return res.status(400).send({ status: false, Message: "Please provide your first name" });
-
-    // this is used to remove spaces in between word.
+    // this is used to remove spaces in between word and trim.
     fname = checkSpaceBtwWord(fname);
+    
     if (!isValidName(fname)) return res.status(400).send({ status: false, message: "Firstname should only contain alphabet" });
+
     if (!isValidBody(lname)) return res.status(400).send({ status: false, Message: "Please provide your last name" });
 
     lname = checkSpaceBtwWord(lname);
@@ -139,8 +140,6 @@ exports.updateUser = async function (req, res) {
     let userId = req.params.userId;
     let data = req.body;
     let files = req.files;
-
-    //
 
     if (files && files.length > 0) {
       data.profileImage = await upload.uploadFile(files[0]);

@@ -7,6 +7,7 @@ function isValidphone(phone) {
     const re = /^(\+91[\-\s]?)?[0]?(91)?[6789]\d{9}$/;
     return re.test(String(phone));
 }
+
 const isValidBody = function (Stringvalue) {
     if (typeof Stringvalue === "undefined" || Stringvalue === null) return false;
     if (typeof Stringvalue === "string" && Stringvalue.trim().length === 0) return false;
