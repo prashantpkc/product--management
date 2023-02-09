@@ -31,6 +31,7 @@ exports.createOrder = async (req, res) => {
     //products quantity update
     let items = cartItems.items
     let totalQuantity = 0
+    
     for (let i = 0; i < items.length; i++) {
       totalQuantity += items[i].quantity
     }
