@@ -4,6 +4,8 @@ const upload = require("../aws/aws");
 
 let { isValidProductName, isValidPrice, isValidInstallments, isValidBody, isValidName, isValidateSize, isValidCurrencyId } = require("../validator/validator");
 
+//===========================================CREATE PRODUCT============================
+
 exports.createProduct = async (req, res) => {
   try {
     let data = req.body;
@@ -79,7 +81,7 @@ availableSizes = availableSizes.trim()
   }
 };
 
-//===============================getProduct===================================================================//
+//===============================GET PRODUCT===================================================================//
 
 exports.getProduct = async function (req, res) {
   try {

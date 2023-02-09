@@ -118,7 +118,6 @@ module.exports.login = async (req, res) => {
   }
 };
 
-//get userDetails by params
 exports.getUser = async (req, res) => {
   try {
     let userId = req.params.userId;
