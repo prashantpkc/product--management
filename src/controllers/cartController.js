@@ -20,6 +20,7 @@ exports.createCart = async (req, res) => {
         if (!productData) {
             return res.status(404).send({ status: false, message: "productId is not found" })
         }
+        
         let price = productData.price
 
         let cartData = await cartModel.findOne({ userId: userId, _id:cartId })
@@ -33,13 +34,13 @@ exports.createCart = async (req, res) => {
                 totalItems: 1,
             }
 
-            let checkId = await cartModel.findOne({userId:userId})
-
-            if(checkId) return res.status(400).send({ status: false, message: "plz provide  valid cartid" })
+            let  check = await cartModel.findOne({userId:userId,_id: cartId})
+            if(check) return res.status(400).send({status:false, message:"pls provide valid cartid"})
 
             let createCart = await cartModel.create(data)
-            return res.status(201).send({ status: true, message: "Success", data: createCart })
-          }
+
+            return res.status(201).send({status:true, message:"Success", data:createCart})
+        }
 
         else {
             let items = cartData.items

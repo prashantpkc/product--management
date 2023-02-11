@@ -54,7 +54,7 @@ availableSizes = availableSizes.trim()
     if (currencyFormat != "₹") return res.status(400).send({ status: false, message: "currency format should be ₹" });
 
     if (!currencyId) return res.status(400).send({ status: false, message: "currencyId is required" })
-    currencyId = currencyId.trim()
+    currencyId = currencyId.trim().toUpperCase()
     if (!isValidBody(currencyId)) return res.status(400).send({ status: false, message: "currencyId is required" });
     if (!isValidCurrencyId(currencyId)) return res.status(400).send({ status: false, message: "currencyId must be INR" });
 
