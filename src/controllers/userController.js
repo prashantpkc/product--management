@@ -106,6 +106,7 @@ exports.login = async (req, res) => {
 
     if (!findCredential) return res.status(400).send({ status: false, message: "email is incorrect" });
     let checkPass = await bcrypt.compare(password, findCredential.password);
+    
     if (!checkPass) return res.status(400).send({ status: false, message: "password is incorrect" });
 
     let user = findCredential._id;
